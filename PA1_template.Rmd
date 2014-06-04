@@ -1,20 +1,45 @@
 # Reproducible Research: Peer Assessment 1
 
-
+## Loading packages
+```{r}
+library(plyr)
+```
 ## Loading and preprocessing the data
 
+```{r}
+activity <- read.csv("activity.csv")
+str(activity)
+summary(activity)
+```
 
+Create new data frame for daily activity with two variables, dates and spd (steps per day):
+
+```{r}
+daily <- ddply(activity, .(date), summarise, steps = sum(steps,na.rm=TRUE))
+activity$interval <- as.factor(activity$interval)
+per_min <- ddply(activity, .(interval), summarise, steps = sum(steps,na.rm=TRUE))
+str(per_min)
+```
 
 ## What is mean total number of steps taken per day?
 
+```{r}
+ hist(daily$steps,nrow(daily))
+```
 
+The mean total number of steps taken per day is `r mean(daily$steps, na.rm=TRUE)` steps. The median is `r median(daily$steps,na.rm=TRUE)` steps.
 
 ## What is the average daily activity pattern?
 
+```{r}
+plot(per_min$interval,per_min$steps)
+```
 
+The 5-minute interval when most steps are taken (on average) is the `r per_min$interval[per_min$steps == max(per_min$steps)]`th interval.
 
 ## Imputing missing values
 
 
+The total number of missing values is `r sum(is.na(activity))`.
 
 ## Are there differences in activity patterns between weekdays and weekends?
