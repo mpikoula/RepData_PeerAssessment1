@@ -1,8 +1,9 @@
 # Reproducible Research: Peer Assessment 1
 
-## Loading packages
+## Loading useful packages for the analysis
 ```{r}
 library(plyr)
+library(lattice)
 ```
 ## Loading and preprocessing the data
 
@@ -12,11 +13,10 @@ str(activity)
 summary(activity)
 ```
 
-Create new data frame for daily activity with two variables, dates and spd (steps per day):
+Create new data frame for daily activity with two variables, dates and total steps per day:
 
 ```{r}
 daily <- ddply(activity, .(date), summarise, steps = sum(steps,na.rm=TRUE))
-#activity$interval <- as.factor(activity$interval)
 per_min <- ddply(activity, .(interval), summarise, steps = mean(steps,na.rm=TRUE))
 str(per_min)
 ```
@@ -67,3 +67,28 @@ The new mean total number of steps taken per day is `r as.integer(mean(daily_com
 The new values are different to those calculated by simply ignoring NAs. More precisely, the mean has changed by +`r as.integer(mean(daily_compl$steps) - mean(daily$steps, na.rm=TRUE))` steps and the median by + `r as.integer(median(daily_compl$steps) - median(daily$steps, na.rm=TRUE))` steps. Most of the difference seems to stem from the absence of most of 0-steps days, for which data was not available. This ends up making the distribution across the days look more "normal", hence the bigger influence on the mean, rather than the median value.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r}
+activity_compl["day"] <- weekdays(as.Date(activity_compl$date)) #first assign days
+#then assign weekdays:
+activity_compl$day[activity_compl$day != "Saturday" & activity_compl$day != "Sunday"] <- "weekday"
+#weekends:
+activity_compl$day[activity_compl$day == "Saturday" | activity_compl$day == "Sunday"] <- "weekend"
+#and finally convert to factor instead of character:
+activity_compl$day <- as.factor(activity_compl$day)
+#check to see if it works:
+str(activity_compl)
+```
+Plotting weekend vs weekdays
+ 
+```{r}
+ #First we create the per-minute interval data frame as before (keeping also the day type variable):
+ per_min_compl <- ddply(activity_compl, .(interval,day), summarise, steps = mean(steps))
+ str(per_min_compl)
+```
+
+And we plot for each type of day (weekday or weekend):
+
+```{r}
+xyplot(steps ~ interval | day,data=per_min_compl,type="l", layout=c(1,2))
+```
