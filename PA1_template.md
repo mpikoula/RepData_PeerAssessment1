@@ -40,14 +40,14 @@ Create new data frame for daily activity with two variables, dates and spd (step
 
 ```r
 daily <- ddply(activity, .(date), summarise, steps = sum(steps,na.rm=TRUE))
-activity$interval <- as.factor(activity$interval)
+#activity$interval <- as.factor(activity$interval)
 per_min <- ddply(activity, .(interval), summarise, steps = mean(steps,na.rm=TRUE))
 str(per_min)
 ```
 
 ```
 ## 'data.frame':	288 obs. of  2 variables:
-##  $ interval: Factor w/ 288 levels "0","5","10","15",..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
 ```
 
@@ -66,7 +66,7 @@ The mean total number of steps taken per day is 9354 steps. The median is 10395 
 
 
 ```r
-plot(per_min$interval,per_min$steps)
+plot(per_min$interval,per_min$steps, type="l")
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
@@ -101,7 +101,7 @@ daily_compl <- ddply(activity_compl, .(date), summarise, steps = sum(steps,na.rm
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
-The new mean total number of steps taken per day is 1.0766 &times; 10<sup>4</sup> steps. The median is 1.0766 &times; 10<sup>4</sup> steps.
+The new mean total number of steps taken per day is 10766 steps. The median is `as.integer(r median(daily_compl$steps))` steps.
 
 The new values are different to those calculated by simply ignoring NAs. More precisely, the mean has changed by +1411 steps and the median by + 371 steps. Most of the difference seems to stem from the absence of most of 0-steps days, for which data was not available. This ends up making the distribution across the days look more "normal", hence the bigger influence on the mean, rather than the median value.
 
