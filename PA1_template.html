@@ -244,11 +244,14 @@ str(per_min)
 
 <h2>Imputing missing values</h2>
 
-<p>The total number of missing values is 2304.</p>
+<p>The total number of missing values is 2304. Now we create the new data frame which includes all completed cases. The strategy to do this involves replacing NAs with the average value for the particular interval across all days.</p>
 
-<pre><code class="r">activity_compl &lt;- activity
-na_index &lt;- which(is.na(activity_compl$steps))
-minutes &lt;- activity_compl$interval[na_index]
+<pre><code class="r">activity_compl &lt;- activity #make a copy of the data frame
+na_index &lt;- which(is.na(activity_compl$steps)) #get the indexes of all NAs for number of steps
+minutes &lt;- activity_compl$interval[na_index] #add the interval values of NAs to a vector
+
+#And now we create a new vector with the replacement values:
+
 missing &lt;- vector(&#39;integer&#39;, length=0)
 for (i in minutes) {
   b &lt;- per_min$steps[per_min$interval == i]

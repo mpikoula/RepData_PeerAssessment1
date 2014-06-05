@@ -75,13 +75,16 @@ The 5-minute interval when most steps are taken (on average) is the 835th interv
 
 ## Imputing missing values
 
-The total number of missing values is 2304.
+The total number of missing values is 2304. Now we create the new data frame which includes all completed cases. The strategy to do this involves replacing NAs with the average value for the particular interval across all days.
 
 
 ```r
-activity_compl <- activity
-na_index <- which(is.na(activity_compl$steps))
-minutes <- activity_compl$interval[na_index]
+activity_compl <- activity #make a copy of the data frame
+na_index <- which(is.na(activity_compl$steps)) #get the indexes of all NAs for number of steps
+minutes <- activity_compl$interval[na_index] #add the interval values of NAs to a vector
+
+#And now we create a new vector with the replacement values:
+
 missing <- vector('integer', length=0)
 for (i in minutes) {
   b <- per_min$steps[per_min$interval == i]
